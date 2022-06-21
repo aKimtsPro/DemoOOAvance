@@ -1,5 +1,7 @@
 package bstorm.akimts.oo.avance.demo;
 
+import bstorm.akimts.oo.avance.demo.exceptions.InterfaceBanque;
+
 public class Programme {
 
     public static void main(String[] args){

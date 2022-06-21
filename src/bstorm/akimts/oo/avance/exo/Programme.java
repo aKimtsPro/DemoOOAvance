@@ -2,6 +2,8 @@ package bstorm.akimts.oo.avance.exo;
 
 import bstorm.akimts.oo.avance.exo.exceptions.EtatCompetitionException;
 
+import java.util.List;
+
 public class Programme {
 
     public static void main(String[] args) {
@@ -15,7 +17,6 @@ public class Programme {
         catch(EtatCompetitionException ex) {
             ex.printStackTrace();
         }
-
 
     }
 

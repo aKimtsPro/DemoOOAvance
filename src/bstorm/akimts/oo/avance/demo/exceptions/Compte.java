@@ -1,4 +1,4 @@
-package bstorm.akimts.oo.avance.demo;
+package bstorm.akimts.oo.avance.demo.exceptions;
 
 import bstorm.akimts.oo.avance.demo.exceptions.MontantNegatifException;
 import bstorm.akimts.oo.avance.demo.exceptions.SoldeInsuffisantException;

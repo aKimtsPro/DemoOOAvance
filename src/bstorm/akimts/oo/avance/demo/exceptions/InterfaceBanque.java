@@ -1,7 +1,4 @@
-package bstorm.akimts.oo.avance.demo;
-
-import bstorm.akimts.oo.avance.demo.exceptions.MontantNegatifException;
-import bstorm.akimts.oo.avance.demo.exceptions.SoldeInsuffisantException;
+package bstorm.akimts.oo.avance.demo.exceptions;
 
 import java.io.*;
 import java.util.Scanner;
