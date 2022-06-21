@@ -118,11 +118,11 @@ public class CompetitionImpl implements Competition {
     private List<Sportif> genererClassement(){
 
         List<Sportif> classement = new ArrayList<>();
-
-        for (Sportif sportif : participants.keySet()) {
+        Set<Sportif> set =participants.keySet();
+        for (Sportif sportif : set) {
 
             boolean place = false;
-            for (int i = 0; i < classement.size(); i++) {
+            for (int i = 0;!place && i < classement.size() ; i++) {
 
                 Sportif currentSportif = classement.get(i);
                 int currentPerf = participants.get(currentSportif);
