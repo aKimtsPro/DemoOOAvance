@@ -39,6 +39,7 @@ public class Coureur extends Sportif{
     @Override
     public int performer() {
         Random rdm = new Random();
-        return vitesseMoyenne / poid * (110 + rdm.nextInt(21));
+        double rslt = (double)vitesseMoyenne / poid * (110 + rdm.nextInt(21));
+        return (int)rslt;
     }
 }
