@@ -19,7 +19,7 @@ public class DemoEnum {
 //        boolean invalid = true;
         Jeu jeu = null;
         do {
-
+//  comm à supprimer
             Scanner sc = new Scanner(System.in);
             System.out.println("Selectionnez votre mode de jeu:" +
                     "\n- FACILE" +
