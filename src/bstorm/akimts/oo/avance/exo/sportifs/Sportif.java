@@ -1,9 +1,9 @@
-package bstorm.akimts.oo.avance.exo;
+package bstorm.akimts.oo.avance.exo.sportifs;
 
 import java.time.LocalDate;
 import java.util.Random;
 
-public class Sportif {
+public abstract class Sportif {
 
     private String nom;
     private String prenom;
@@ -15,9 +15,7 @@ public class Sportif {
         this.dateNaiss = dateNaiss;
     }
 
-    public int performer() {
-        return new Random().nextInt(1,101);
-    }
+    public abstract int performer();
 
     public String getNom() {
         return nom;

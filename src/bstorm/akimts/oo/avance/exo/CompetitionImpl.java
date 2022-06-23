@@ -2,14 +2,15 @@ package bstorm.akimts.oo.avance.exo;
 
 import bstorm.akimts.oo.avance.exo.exceptions.EtatCompetitionException;
 import bstorm.akimts.oo.avance.exo.exceptions.LimiteAtteinteException;
+import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
 
 import java.util.*;
 
-public class CompetitionImpl implements Competition {
-
+public class CompetitionImpl<T extends Sportif> implements Competition<T> {
+    
     private final int limiteParticipant;
-    private final Map<Sportif, Integer> participants = new HashMap<>();
-    private List<Sportif> classements;
+    private final Map<T, Integer> participants = new HashMap<>();
+    private List<T> classements;
 
     public CompetitionImpl() {
         limiteParticipant = 0;
@@ -33,15 +34,15 @@ public class CompetitionImpl implements Competition {
         if( participants.size() <= 3 )
             throw new IllegalStateException("La compet n'a pas de participants");
 
-        for (Sportif sportif : participants.keySet()) {
-            participants.put(sportif, sportif.performer());
+        for (T T : participants.keySet()) {
+            participants.put(T, T.performer());
         }
 
         classements = genererClassement();
     }
 
     @Override
-    public void inscrire(Sportif sportif) {
+    public void inscrire(T aInscrire) {
 
         // n'est pas termine
         if( isTerminee()  )
@@ -52,28 +53,28 @@ public class CompetitionImpl implements Competition {
             throw new LimiteAtteinteException(limiteParticipant);
 
         // doit etre non inscrit+
-        if( participants.containsKey(sportif) )
-            throw new IllegalArgumentException("sportif déjà inscrit");
+        if( participants.containsKey(aInscrire) )
+            throw new IllegalArgumentException("T déjà inscrit");
 
-        participants.put(sportif, null);
+        participants.put(aInscrire, null);
     }
 
     @Override
-    public void desinscrire(Sportif sportif) {
+    public void desinscrire(T T) {
 
         // deja terminée
         if( isTerminee()  )
             throw new EtatCompetitionException(isTerminee() , false);
 
         // n'existe pas
-        if( !participants.containsKey(sportif) )
-            throw new IllegalArgumentException("sportif non inscrit");
+        if( !participants.containsKey(T) )
+            throw new IllegalArgumentException("T non inscrit");
 
-        participants.remove(sportif);
+        participants.remove(T);
     }
 
     @Override
-    public Set<Sportif> getGagnants() {
+    public Set<T> getGagnants() {
 
         if( !isTerminee() )
             throw new EtatCompetitionException(isTerminee() , true);
@@ -85,8 +86,8 @@ public class CompetitionImpl implements Competition {
                 maxPerf = value;
         }
 
-        Set<Sportif> gagnants = new HashSet<>();
-        for (Map.Entry<Sportif, Integer> entry : participants.entrySet()) {
+        Set<T> gagnants = new HashSet<>();
+        for (Map.Entry<T, Integer> entry : participants.entrySet()) {
             if( entry.getValue() == maxPerf )
                 gagnants.add(entry.getKey() );
         }
@@ -97,7 +98,7 @@ public class CompetitionImpl implements Competition {
 //                .max()
 //                .getAsInt();
 
-//        Set<Sportif> gagnants = participants.entrySet().stream()
+//        Set<T> gagnants = participants.entrySet().stream()
 //                .filter( e -> e.getValue() == maxPerf )
 //                .map( Map.Entry::getKey )
 //                .collect(Collectors.toSet());
@@ -115,36 +116,46 @@ public class CompetitionImpl implements Competition {
         return limiteParticipant;
     }
 
-    private List<Sportif> genererClassement(){
+    private List<T> genererClassement(){
 
-        List<Sportif> classement = new ArrayList<>();
-        Set<Sportif> set =participants.keySet();
-        for (Sportif sportif : set) {
+        List<T> classement = new ArrayList<>();
+        Set<T> set = participants.keySet();
+        for (T T : set) {
 
             boolean place = false;
             for (int i = 0;!place && i < classement.size() ; i++) {
 
-                Sportif currentSportif = classement.get(i);
-                int currentPerf = participants.get(currentSportif);
+                T currentT = classement.get(i);
+                int currentPerf = participants.get(currentT);
 
-                int perfSportAPlacer = participants.get(sportif);
+                int perfSportAPlacer = participants.get(T);
 
                 if( perfSportAPlacer > currentPerf ){
-                    classement.add(i, sportif);
+                    classement.add(i, T);
                     place = true;
                 }
             }
 
             if( !place )
-                classement.add(sportif);
+                classement.add(T);
 
         }
 
         return classement;
     }
 
-    public List<Sportif> getClassements() {
+    public List<T> getClassements() {
         return new ArrayList<>(classements);
+    }
+
+    public void inscrire(Collection<? extends T> aInscrire){
+        for (T sportif : aInscrire) {
+            inscrire(sportif);
+        }
+    }
+
+    public void transfertParticipants(CompetitionImpl<? super T> autreCompet){
+        autreCompet.inscrire( participants.keySet() );
     }
 }
 
