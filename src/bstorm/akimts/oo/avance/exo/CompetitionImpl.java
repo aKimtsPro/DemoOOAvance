@@ -157,6 +157,28 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
     public void transfertParticipants(CompetitionImpl<? super T> autreCompet){
         autreCompet.inscrire( participants.keySet() );
     }
+
+    // Créer une compétition non terminée sur base d'une autre.
+    // Elle aura les mêmes participants
+    public static <Type extends Sportif> CompetitionImpl<Type> fusionner(CompetitionImpl<? extends Type> membre1, CompetitionImpl<? extends Type> membre2){
+
+        CompetitionImpl<Type> compet = new CompetitionImpl<>();
+        membre1.transfertParticipants(compet);
+        membre2.transfertParticipants(compet);
+        return compet;
+
+    }
+
+    public <O extends T> Set<O> getOfType( Class<O> clazz ){
+        Set<O> set = new HashSet<>();
+
+        for (T part : participants.keySet()) {
+            if(part != null && part.getClass().equals(clazz))
+                set.add((O)part);
+        }
+
+        return set;
+    }
 }
 
 

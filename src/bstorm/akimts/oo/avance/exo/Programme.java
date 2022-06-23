@@ -6,6 +6,7 @@ import bstorm.akimts.oo.avance.exo.sportifs.CoureurSprint;
 import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Programme {
 
@@ -22,6 +23,10 @@ public class Programme {
         compet3.transfertParticipants(compet);
 //        compet.transfertParticipants(compet3); // impossible tous les Coureur ne sont pas de CoureurSprint
 
+
+        Set<CoureurSprint> coureurSprints1 = compet.getOfType(CoureurSprint.class);
+
+        CompetitionImpl<Sportif> competition = CompetitionImpl.fusionner(compet, compet3);
 
 
         try {
