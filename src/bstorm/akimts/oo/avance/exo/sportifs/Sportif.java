@@ -8,6 +8,7 @@ public abstract class Sportif {
     private String nom;
     private String prenom;
     private LocalDate dateNaiss;
+    private int totalGain;
 
     public Sportif(String nom, String prenom, LocalDate dateNaiss) {
         this.nom = nom;
@@ -39,5 +40,16 @@ public abstract class Sportif {
 
     public void setDateNaiss(LocalDate dateNaiss) {
         this.dateNaiss = dateNaiss;
+    }
+
+    public int getTotalGain() {
+        return totalGain;
+    }
+
+    public void ajouterGain( int gain ){
+        if( gain < 0 )
+            throw new IllegalArgumentException("le gain ne peut être négatif");
+
+        totalGain += gain;
     }
 }

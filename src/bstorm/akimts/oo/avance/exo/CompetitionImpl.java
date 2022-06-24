@@ -1,5 +1,6 @@
 package bstorm.akimts.oo.avance.exo;
 
+import bstorm.akimts.oo.avance.demo.annotation.NonCompetitif;
 import bstorm.akimts.oo.avance.exo.exceptions.EtatCompetitionException;
 import bstorm.akimts.oo.avance.exo.exceptions.LimiteAtteinteException;
 import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
@@ -7,21 +8,15 @@ import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
 import java.util.*;
 
 public class CompetitionImpl<T extends Sportif> implements Competition<T> {
-    
-    private final int limiteParticipant;
+
     private final Map<T, Integer> participants = new HashMap<>();
     private List<T> classements;
+    private final Localisation localisation;
 
-    public CompetitionImpl() {
-        limiteParticipant = 0;
+    public CompetitionImpl(Localisation localisation) {
+        this.localisation = localisation;
     }
 
-
-    public CompetitionImpl(int limiteParticipant) {
-        if(limiteParticipant < 0)
-            throw new IllegalArgumentException("la limite de participant invalide (devrait être positive");
-        this.limiteParticipant = limiteParticipant;
-    }
 
     @Override
     public void lancer() {
@@ -34,13 +29,27 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
         if( participants.size() <= 3 )
             throw new IllegalStateException("La compet n'a pas de participants");
 
-        for (T T : participants.keySet()) {
-            participants.put(T, T.performer());
+        for (T sportif : participants.keySet()) {
+            participants.put(sportif, sportif.performer());
         }
 
         classements = genererClassement();
+        Set<T> gagnants = getGagnants();
+        int argentReparti = localisation.getGain() / gagnants.size();
+
+        for (T gagnant : gagnants) {
+            gagnant.ajouterGain( argentReparti );
+        }
     }
 
+    /**
+     * Inscrit un sportif à la compétition.
+     * La compétition ne peut être terminée.
+     * La limite de participant ne peut être dépassée.
+     * On ne peut pas inscrire 2x la même
+     *
+     * @param aInscrire
+     */
     @Override
     public void inscrire(T aInscrire) {
 
@@ -49,12 +58,22 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
             throw new EtatCompetitionException(isTerminee() , false);
 
         // il y a de la place
-        if( limiteParticipant != 0 && participants.size() >= limiteParticipant )
-            throw new LimiteAtteinteException(limiteParticipant);
+        if( localisation.getLimitePart() != 0 && participants.size() >= localisation.getLimitePart() )
+            throw new LimiteAtteinteException( localisation.getLimitePart() );
 
         // doit etre non inscrit+
         if( participants.containsKey(aInscrire) )
             throw new IllegalArgumentException("T déjà inscrit");
+
+        NonCompetitif annotation = aInscrire.getClass().getAnnotation(NonCompetitif.class);
+        if( annotation != null ){
+            Localisation[] localisations = annotation.value();
+            for (Localisation localisation1 : localisations) {
+                if( localisation1 == localisation )
+                    throw new IllegalArgumentException("Le sportif est non compétitif");
+            }
+        }
+
 
         participants.put(aInscrire, null);
     }
@@ -113,7 +132,11 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
 
     @Override
     public int getLimiteParticipant() {
-        return limiteParticipant;
+        return localisation.getLimitePart();
+    }
+
+    public Localisation getLocalisation(){
+        return localisation;
     }
 
     private List<T> genererClassement(){
@@ -162,7 +185,7 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
     // Elle aura les mêmes participants
     public static <Type extends Sportif> CompetitionImpl<Type> fusionner(CompetitionImpl<? extends Type> membre1, CompetitionImpl<? extends Type> membre2){
 
-        CompetitionImpl<Type> compet = new CompetitionImpl<>();
+        CompetitionImpl<Type> compet = new CompetitionImpl<>( membre1.localisation.meilleure(membre2.localisation) );
         membre1.transfertParticipants(compet);
         membre2.transfertParticipants(compet);
         return compet;
