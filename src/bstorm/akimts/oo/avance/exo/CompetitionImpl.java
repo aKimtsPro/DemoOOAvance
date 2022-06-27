@@ -5,6 +5,15 @@ import bstorm.akimts.oo.avance.exo.exceptions.EtatCompetitionException;
 import bstorm.akimts.oo.avance.exo.exceptions.LimiteAtteinteException;
 import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class CompetitionImpl<T extends Sportif> implements Competition<T> {
@@ -12,11 +21,28 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
     private final Map<T, Integer> participants = new HashMap<>();
     private List<T> classements;
     private final Localisation localisation;
+    private String nom;
+    private final Class<T> clazz;
 
-    public CompetitionImpl(Localisation localisation) {
-        this.localisation = localisation;
+    private TermineListener listener;
+
+    public void abonner(TermineListener listener) {
+        this.listener = listener;
     }
 
+    public CompetitionImpl(Localisation localisation, String nom, Class<T> clazz) {
+        this.localisation = localisation;
+        this.nom = nom;
+        this.clazz = clazz;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
     @Override
     public void lancer() {
@@ -40,6 +66,9 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
         for (T gagnant : gagnants) {
             gagnant.ajouterGain( argentReparti );
         }
+
+        if(listener != null)
+            listener.notifier();
     }
 
     /**
@@ -183,14 +212,14 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
 
     // Créer une compétition non terminée sur base d'une autre.
     // Elle aura les mêmes participants
-    public static <Type extends Sportif> CompetitionImpl<Type> fusionner(CompetitionImpl<? extends Type> membre1, CompetitionImpl<? extends Type> membre2){
-
-        CompetitionImpl<Type> compet = new CompetitionImpl<>( membre1.localisation.meilleure(membre2.localisation) );
-        membre1.transfertParticipants(compet);
-        membre2.transfertParticipants(compet);
-        return compet;
-
-    }
+//    public static <Type extends Sportif> CompetitionImpl<Type> fusionner(CompetitionImpl<? extends Type> membre1, CompetitionImpl<? extends Type> membre2){
+//
+//        CompetitionImpl<Type> compet = new CompetitionImpl<>( membre1.localisation.meilleure(membre2.localisation), nom, Type.);
+//        membre1.transfertParticipants(compet);
+//        membre2.transfertParticipants(compet);
+//        return compet;
+//
+//    }
 
     public <O extends T> Set<O> getOfType( Class<O> clazz ){
         Set<O> set = new HashSet<>();
@@ -202,6 +231,16 @@ public class CompetitionImpl<T extends Sportif> implements Competition<T> {
 
         return set;
     }
+
+    public void sauvegarder(){
+
+        String nomVerifie = nom.replaceAll(" ", "_")
+                .replaceAll("[\\\\/:*?\"<>|]", "");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
+        String filename = nomVerifie+ LocalDate.now().format(formatter);
+
+    }
+
 }
 
 
