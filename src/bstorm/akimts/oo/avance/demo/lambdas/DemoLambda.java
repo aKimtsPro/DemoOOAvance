@@ -1,5 +1,6 @@
 package bstorm.akimts.oo.avance.demo.lambdas;
 
+import bstorm.akimts.oo.avance.demo.streams.Personne;
 import bstorm.akimts.oo.avance.exo.CompetitionImpl;
 import bstorm.akimts.oo.avance.exo.sportifs.Coureur;
 import bstorm.akimts.oo.avance.exo.sportifs.Sportif;
@@ -139,7 +140,7 @@ public class DemoLambda {
         Runnable run = () -> System.out.println("ok");
 
 
-        BiFunction<String,Integer,Personne> biFunc2 = Personne::new;
+        BiFunction<String,Integer, Personne> biFunc2 = Personne::new;
         BiFunction<String,Integer, String> composition = biFunc2.andThen( Personne::getAge )
                 .andThen( (entier) -> "Age de la personne: "+entier);
 

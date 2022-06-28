@@ -1,4 +1,4 @@
-package bstorm.akimts.oo.avance.demo.lambdas;
+package bstorm.akimts.oo.avance.demo.streams;
 
 public class Personne {
 
@@ -32,5 +32,15 @@ public class Personne {
                 "nom='" + nom + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Pour egal obj doit être une Personne non null doit le nom et l'age doivent être les memes que this
+        if(obj == null) return false;
+        if(obj instanceof Personne)
+            return ((Personne)obj).getNom().equals(this.getNom()) && ((Personne)obj).getAge() == this.getAge();
+
+        return false;
     }
 }
