@@ -6,11 +6,8 @@ public class ExoStream {
 
     public static void main(String[] args) {
 
-
-
-
-
-//        VilleService service = new VilleService();
+        VilleService service = new VilleService();
+        // TODO testez vos methodes
 
     }
 

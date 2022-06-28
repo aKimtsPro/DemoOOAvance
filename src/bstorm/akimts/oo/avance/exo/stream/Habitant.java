@@ -47,6 +47,10 @@ public class Habitant {
         this.numero = numero;
     }
 
+    public double getTotalTaxes() {
+        return totalTaxes;
+    }
+
     public void payerTaxe(double montant){
         this.totalTaxes += montant;
     }

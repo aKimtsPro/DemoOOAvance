@@ -3,6 +3,7 @@ package bstorm.akimts.oo.avance.demo.streams;
 import java.nio.CharBuffer;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DemoStream {
@@ -172,6 +173,13 @@ public class DemoStream {
         // Trouve TOUJOURS la première personne (sauf si vide)
         Optional<Personne> premierePersonne = personnes.stream().findFirst();
         // ATTENTION OPTIONAL
+
+
+        // rassemble en une list
+        List<Personne> plusDe20Ans = personnes.stream()
+                        .filter( p -> p.getAge() >= 20)
+                        .collect( Collectors.toList() );
+
 
 
         System.out.println();
