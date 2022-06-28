@@ -19,6 +19,10 @@ public class Ville {
         this.montantTaxe = montantTaxe;
     }
 
+    public Set<Habitant> getHabitants() {
+        return new HashSet<>(habitants);
+    }
+
     public int getCodePostal() {
         return codePostal;
     }
