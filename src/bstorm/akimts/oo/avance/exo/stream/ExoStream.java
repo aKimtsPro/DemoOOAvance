@@ -13,7 +13,7 @@ public class ExoStream {
             new Habitant("Alfi", "Aude", "boulevard Icelle", 158)
         );
 
-        VilleService service = new VilleService();
+//        VilleService service = new VilleService();
 
     }
 
