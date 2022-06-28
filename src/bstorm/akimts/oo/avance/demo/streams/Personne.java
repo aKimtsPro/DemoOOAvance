@@ -1,11 +1,12 @@
 package bstorm.akimts.oo.avance.demo.streams;
 
-public class Personne {
+public class Personne implements Comparable<Personne>{
 
     private String nom;
     private int age;
 
     public Personne(String nom, int age) {
+        System.out.println("J'instancie une personne");
         this.nom = nom;
         this.age = age;
     }
@@ -42,5 +43,12 @@ public class Personne {
             return ((Personne)obj).getNom().equals(this.getNom()) && ((Personne)obj).getAge() == this.getAge();
 
         return false;
+    }
+
+    @Override
+    public int compareTo(Personne o) {
+        if( o == null )
+            return 1; // si o est null, this est supérieur (valeur positive)
+        return this.getAge() - o.getAge(); // this est supérieur si son age est supérieur
     }
 }
