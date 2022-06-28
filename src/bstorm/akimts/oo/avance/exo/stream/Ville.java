@@ -27,6 +27,10 @@ public class Ville {
         return nom;
     }
 
+    public double getMontantTaxe() {
+        return montantTaxe;
+    }
+
     public void ajouter(Habitant habitant){
         this.habitants.add(habitant);
     }
