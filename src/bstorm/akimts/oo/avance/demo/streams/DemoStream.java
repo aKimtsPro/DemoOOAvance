@@ -2,6 +2,9 @@ package bstorm.akimts.oo.avance.demo.streams;
 
 import java.nio.CharBuffer;
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveAction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,9 +19,10 @@ public class DemoStream {
         Personne marie = new Personne("Marie", 17);
         Personne dominique = new Personne("Dominique", 67);
 
-//        personnes.add(luc);
-//        personnes.add(marie);
-//        personnes.add(dominique);
+
+        personnes.add(luc);
+        personnes.add(marie);
+        personnes.add(dominique);
 
         // Definition 'simpliste' du Stream<T>:
         // Suite d'éléments de type T sur lesquels on peut faire des opérations
@@ -180,6 +184,25 @@ public class DemoStream {
                         .filter( p -> p.getAge() >= 20)
                         .collect( Collectors.toList() );
 
+        // former une chaine de caractère representant la concatenation des noms des personne
+        String concatenation = personnes.stream()
+                .map( Personne::getNom )
+                // Le reduce permet de reduire les éléments du Stream en un seul élément
+                // Il demande en paramètre un BinaryOperator dont
+                // - le premier paramètre sera une valeur accumulée,
+                // - le 2e sera le prochain élément considéré
+                // - le retour sera la nouvelle valeur accumulée
+                // Il existe des surcharge de reduce avec ou sans premier paramètre
+                // indiquant ou pas la valeur de base d'accumulation.
+                // Si le paramètre est présent => renvoi directement une valeur
+                // Sinon => renvoi un Optional de la valeur
+                .reduce("", (acc, element) -> {
+                    System.out.println("t > reduce :"+acc+" - " + element);
+                    return acc + element;
+                } );
+
+        System.out.println(concatenation);
+
 
 
         System.out.println();
@@ -196,6 +219,56 @@ public class DemoStream {
 
 
         System.out.println(personne);
+        System.out.println();
+
+        System.out.println("6 - Création de Stream");
+        Random rdm = new Random();
+
+        Stream<Integer> s = Stream.of(1,2,3,4,5,6,7,8,9); // limité
+        s = Stream.generate( rdm::nextInt ); // illimité
+        s = Stream.iterate( 0, (i) -> i+1 ); // illimité
+
+
+        // concat produit un limité si les 2 params sont stream limité,
+        // illimité sinon
+        s = Stream.concat(s, Stream.of(0)); // illimité
+        s = Stream.concat(s.limit(10), Stream.of(0)); // limité
+
+        s = Stream.empty(); // limité
+        s = Stream.ofNullable(10); // limité peu importe le param
+
+        // exemple de generate
+        List<String> nomsPossibles = List.of("Paul", "Luc", "Bob", "John", "Medhi", "Marie", "Claire", "Lucie");
+
+        Stream<Personne> persStream = Stream.generate( () -> {
+            return new Personne(
+                    nomsPossibles.get(rdm.nextInt(nomsPossibles.size()) ),
+                    rdm.nextInt(100)
+            );
+        });
+
+        // Attention au Stream illimité
+        Personne pers = persStream.filter( p -> p.getNom().equals("Bob") )
+                .findFirst() // très proba que ca ne foire pas / mais possibilité que ca foire
+                .get();
+        // Les Stream illimités peuvent produire des boucles infinies => OutOfMemoryException
+
+        List<Integer> ints = List.of(1,2,3);
+        Stream<Integer> streamDeListe = ints.stream();
+
+
+        // generer des personnes, trouver la première qui s'appelle Bob
+
+        System.out.println();
+        System.out.println("7 - Stream paralleles");
+
+        long beforeMillis = System.currentTimeMillis();
+        int sum = s.parallel()       // Stream<Integer>
+                .mapToInt( i -> i ) // IntStream
+                .sum();
+        long afterMillis = System.currentTimeMillis();
+
+        System.out.println("Temps d'execution = " + (afterMillis-beforeMillis) +"ms");
 
 
 

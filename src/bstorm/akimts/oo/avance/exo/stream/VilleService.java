@@ -1,7 +1,9 @@
 package bstorm.akimts.oo.avance.exo.stream;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VilleService {
 
@@ -43,24 +45,45 @@ public class VilleService {
     }
 
     public Ville getWithHighestTaxe(){
-        // TODO retourner la ville ou la taxe est la plus grande ou null si il n'y a pas de ville
+        // retourner la ville ou la taxe est la plus grande ou null si il n'y a pas de ville
+        return villes.stream()
+                // en dernier le moins de taxe -> en premier le plus de taxe
+//                .sorted( (v1, v2) -> (int) (v2.getMontantTaxe() - v1.getMontantTaxe()) )
+////                .sorted( Comparator.comparingDouble( Ville::getMontantTaxe ).reversed() )
+//                .findFirst()
+                .max( Comparator.comparingDouble( Ville::getMontantTaxe ) )
+                .orElse(null);
     }
 
     public List<String> getCityNames(){
-        // TODO retourner la liste des noms des villes
+        // retourner la liste des noms des villes
+        return villes.stream()
+                .map( Ville::getNom )
+                .collect(Collectors.toList());
     }
 
     public Habitant getMostTaxed(){
-        // TODO Retourner l'habitant qui le plus été taxé ou lancer une RuntimeException
+        // Retourner l'habitant qui le plus été taxé ou lancer une RuntimeException
+        return villes.stream()
+                .flatMap( v -> v.getHabitants().stream() )
+                .max( Comparator.comparingDouble( Habitant::getTotalTaxes ) )
+                .orElseThrow( () -> new RuntimeException("Pas d'habitant") );
     }
 
     public List<String> getStreets(){
-        // TODO retourner le nom des rue des villes gérées ou habitent des gens (pas de doublon)
+        // retourner le nom des rue des villes gérées ou habitent des gens (pas de doublon)
         // attention, plusieurs habitant sont dans la même rue
+        return villes.stream() // Stream<Ville>
+                .flatMap( v -> v.getHabitants().stream().map( Habitant::getRue ) ) // Stream<String>
+                .distinct() // Stream<String>
+                .collect(Collectors.toList()); // List<String>
     }
 
     public void taxe(char begin){
-        // TODO faire en sorte que tous les habitants des villes gérées dont le nom commence
+        // faire en sorte que tous les habitants des villes gérées dont le nom commence
         // par la lettre en param payent leur taxe.
+        villes.stream()
+                .filter( v -> v.getNom().charAt(0) == begin )
+                .forEach( Ville::taxer );
     }
 }
