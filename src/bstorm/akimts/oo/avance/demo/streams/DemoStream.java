@@ -1,13 +1,15 @@
 package bstorm.akimts.oo.avance.demo.streams;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 public class DemoStream {
 
@@ -237,6 +239,22 @@ public class DemoStream {
         s = Stream.empty(); // limité
         s = Stream.ofNullable(10); // limité peu importe le param
 
+        IntStream intStream = IntStream.range(1, 100);
+        intStream = IntStream.rangeClosed(1, 100);
+        LongStream longStream = LongStream.range(1,100);
+        longStream = LongStream.rangeClosed(1,100);
+
+
+        // Certains objets permettent de générer des streams.
+        // C'est le cas des Collections et BufferedReader par exemple.
+        try(BufferedReader bf = new BufferedReader( new FileReader("resources/new_file.txt"))) {
+            bf.lines()
+//                    .map(chaine -> /* creer une personne sur base de la ligne */)
+                    .forEach(System.out::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // exemple de generate
         List<String> nomsPossibles = List.of("Paul", "Luc", "Bob", "John", "Medhi", "Marie", "Claire", "Lucie");
 
@@ -256,6 +274,9 @@ public class DemoStream {
         List<Integer> ints = List.of(1,2,3);
         Stream<Integer> streamDeListe = ints.stream();
 
+        IntStream streamInt = IntStream.range(1, 101);
+        streamInt = IntStream.rangeClosed(1, 100);
+
 
         // generer des personnes, trouver la première qui s'appelle Bob
 
@@ -269,9 +290,6 @@ public class DemoStream {
         long afterMillis = System.currentTimeMillis();
 
         System.out.println("Temps d'execution = " + (afterMillis-beforeMillis) +"ms");
-
-
-
 
 
         // BONUS
