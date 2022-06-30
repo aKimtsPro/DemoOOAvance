@@ -2,17 +2,24 @@ package bstorm.akimts.oo.avance.exo.threads;
 
 public class Carcasse {
 
-    private String  type;
+    private TypeCarcasse type;
 
-    public Carcasse(String type) {
+    public Carcasse(TypeCarcasse type) {
         this.type = type;
     }
 
-    public String getType() {
+    public TypeCarcasse getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TypeCarcasse type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Carcasse{" +
+                "type='" + type + '\'' +
+                '}';
     }
 }
